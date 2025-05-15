@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import {Editor, ShortcutKey} from 'amis-editor';
 import {inject, observer} from 'mobx-react';
 import {RouteComponentProps} from 'react-router-dom';
@@ -9,7 +9,7 @@ import {IMainStore} from '../store';
 import '../editor/DisabledEditorPlugin'; // 用于隐藏一些不需要的Editor预置组件
 import '../renderer/MyRenderer';
 import '../editor/MyRenderer';
-
+import React, { useEffect, useState } from 'react';
 let currentIndex = -1;
 
 let host = `${window.location.protocol}//${window.location.host}`;
@@ -40,16 +40,71 @@ export default inject('store')(
     match
   }: {store: IMainStore} & RouteComponentProps<{id: string}>) {
     const index: number = parseInt(match.params.id, 10);
-    const curLanguage = currentLocale(); // 获取当前语料类型
+    const pageId = store.pages[index]?.id;
+    const [loading, setLoading] = useState(true);
 
-    if (index !== currentIndex) {
-      currentIndex = index;
-      store.updateSchema(store.pages[index].schema);
-    }
+    const curLanguage = currentLocale();
 
+    useEffect(() => {
+      if (!pageId) return;
+
+      setLoading(true);
+      fetch(`http://localhost:300/api/page/get?id=${pageId}`)
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 0) {
+            const schema = typeof res.data.schema === 'string'
+              ? JSON.parse(res.data.schema)
+              : res.data.schema;
+
+            store.updateSchema(schema);
+			store.updatePageSchemaAt(index); // 仍然调用一次存储到当前页面中
+
+          } else {
+			
+            toast.error('获取页面数据失败: ' + res.msg, '错误');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          toast.error('获取页面异常: ' + err.message, '错误');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }, [pageId, index, store]);
+	
+	
     function save() {
       store.updatePageSchemaAt(index);
-      toast.success('保存成功', '提示');
+
+	  const page = store.pages[index]; // 获取当前页面
+	  const schema = page.schema;
+
+	  // 👇 添加你自己的保存接口调用
+	  fetch('http://localhost:300/api/page/save', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+		  id: page.id,
+		  schema: schema
+		})
+	  })
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === 0) {
+        toast.success('保存成功', '提示');
+      } else {
+        toast.error('保存失败: ' + res.msg, '错误');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      toast.error('保存异常: ' + err.message, '错误');
+    });
+      //toast.success('保存成功', '提示');
     }
 
     function onChange(value: any) {
@@ -119,6 +174,9 @@ export default inject('store')(
                 退出
               </div>
             )}
+	     <div className={`header-action-btn save-btn`} onClick={save}>
+                保存
+              </div>
           </div>
         </div>
         <div className="Editor-inner">

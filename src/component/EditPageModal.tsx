@@ -1,10 +1,11 @@
 import React from 'react';
-import {schema2component} from './AMISRenderer';
+import { schema2component } from './AMISRenderer';
 import axios from 'axios';
+
 export default schema2component(
   {
     type: 'dialog',
-    title: '新增页面',
+    title: '编辑页面属性',
     body: {
       type: 'form',
       controls: [
@@ -17,7 +18,6 @@ export default schema2component(
           },
           required: true
         },
-
         {
           type: 'text',
           label: '路径',
@@ -27,13 +27,12 @@ export default schema2component(
           },
           required: true,
           validate(values: any, value: string) {
-            const exists = !!values.pages.filter(
-              (item: any) => item.path === value
-            ).length;
+            // Ensure that `values` is not undefined and `pages` is properly initialized
+            const pages = values?.pages || [];
+            const exists = pages.some((item: any) => item.path === value);
             return exists ? '当前路径已被占用，请换一个' : '';
           }
         },
-
         {
           type: 'icon-picker',
           label: '图标',
@@ -42,22 +41,13 @@ export default schema2component(
       ]
     }
   },
-  // ({onConfirm, pages, ...rest}: any) => {
-    // return {
-      // ...rest,
-      // data: {
-        // pages
-      // },
-      // onConfirm: (values: Array<any>) => onConfirm && onConfirm(values[0])
-    // };
-  // }
-  ({ onConfirm, pages, ...rest }: any) => {
+  ({ onConfirm, pages, page, ...rest }: any) => {
     const handleConfirm = async (values: Array<any>) => {
 	  try {
 		const updatedData = values[0];
 
-		const response = await axios.post(
-		  `/api/page/add`,
+		const response = await axios.put(
+		  `http://localhost:300/api/page/${page.id}`,
 		  updatedData,
 		  {
 			headers: {
@@ -76,14 +66,14 @@ export default schema2component(
 		console.error('更新时发生错误', error);
 	  }
 	};
-	return {
+
+    return {
       ...rest,
       data: {
-        pages
+        pages,
+        ...page // 将当前编辑的页面数据作为初始数据
       },
       onConfirm: handleConfirm // 使用自定义的 handleConfirm 函数
     };
   }
-  
-  
 );

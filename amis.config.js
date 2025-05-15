@@ -40,7 +40,7 @@ module.exports = {
     NODE_ENV: 'development',
     ignoreNodeModules: false, // 打包时是否忽略 node_modules
     port: 80,
-    autoOpenBrowser: true,
+    autoOpenBrowser: false,
     assetsPublicPath: '/', // 设置静态资源的引用路径（根域名+路径）
     assetsSubDirectory: '',
     hostname: 'localhost',
@@ -48,16 +48,16 @@ module.exports = {
     closeHotReload: false, // 是否关闭热更新
     closeEditorClient: true, // 是否关闭自动注入editor
     proxyTable: {
-      /**
-       * 将含有'/apiTest'路径的api代理到'http://api-test.com.cn'上，
-       * 详细使用见 https://www.webpackjs.com/configuration/dev-server/#devserver-proxy
-       */
-      '/apiTest': {
-        target: 'http://api-test.com.cn', // 不支持跨域的接口根地址
-        ws: true,
-        changeOrigin: true,
-      },
-    }
+  '/api': {
+    target: 'http://localhost:8080',  // 或你后端实际地址
+    changeOrigin: true,
+    ws: true,
+    pathRewrite: {
+      '^/api': '/api' // 如果后端没有/api前缀则改成 ''
+    },
+    logLevel: 'debug' // 可选：打印代理日志方便调试
+  }
+}
   },
   build: {
     entry: { // webpack构建入口
@@ -66,8 +66,8 @@ module.exports = {
     },
     // 用于构建生产环境代码的相关配置信息
     NODE_ENV: 'production',
-    assetsRoot: resolve('./demo-6.11.0'), // 打包后的文件绝对路径（物理路径）
-    assetsPublicPath: 'https://aisuda.github.io/amis-editor-demo/demo-6.11.0/', // 设置静态资源的引用路径（根域名+路径）
+    assetsRoot: resolve('./demo-6.11.0/'), // 打包后的文件绝对路径（物理路径）
+    assetsPublicPath: './', // 设置静态资源的引用路径（根域名+路径）
     assetsSubDirectory: '', // 资源引用二级路径
     productionSourceMap: false,
     productionGzip: false,

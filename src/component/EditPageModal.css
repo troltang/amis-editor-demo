@@ -1,0 +1,77 @@
+/* EditPageModal.css */
+.edit-page-modal .modal-dialog {
+  max-width: 600px;
+  margin: 30px auto;
+  border-radius: 10px; /* 圆角效果 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 弹窗阴影 */
+}
+
+.edit-page-modal .modal-header {
+  background-color: #4CAF50; /* 绿色背景 */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px 10px 0 0; /* 圆角顶部 */
+}
+
+.edit-page-modal .modal-body {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.edit-page-modal .input-group {
+  margin-bottom: 20px;
+}
+
+.edit-page-modal label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+  color: #333;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  border-color: #4CAF50; /* 高亮边框 */
+  outline: none;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-submit {
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  padding: 8px 15px;
+  transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #45a049; /* 按钮悬浮效果 */
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+  border-radius: 5px;
+  padding: 8px 15px;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+  background-color: #e53935;
+}

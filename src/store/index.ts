@@ -102,20 +102,102 @@ export const MainStore = types
       updateSchema,
       setPreview,
       setIsMobile,
-      afterCreate() {
-        // persist store
-        if (typeof window !== 'undefined' && window.localStorage) {
-          const storeData = window.localStorage.getItem('store');
-          if (storeData) applySnapshot(self, JSON.parse(storeData));
+      // afterCreate() {
+        ////persist store
+        // if (typeof window !== 'undefined' && window.localStorage) {
+          // const storeData = window.localStorage.getItem('store');
+          // if (storeData) applySnapshot(self, JSON.parse(storeData));
 
-          reaction(
-            () => getSnapshot(self),
-            json => {
-              window.localStorage.setItem('store', JSON.stringify(json));
-            }
-          );
-        }
-      }
+          // reaction(
+            // () => getSnapshot(self),
+            // json => {
+              // window.localStorage.setItem('store', JSON.stringify(json));
+            // }
+          // );
+        // }
+      // }
+	  afterCreate() {
+		  const env = getEnv(self);
+
+		  if (env && env.fetcher) {
+			fetch('http://localhost:300/api/page')
+			  .then((response) => response.json())
+			  .then((res: any) => {
+				if (res?.status === 0 && Array.isArray(res.data)) {
+				  const newPages = res.data.map((item: any) => ({
+					id: `${item.id}`,
+					path: item.path,
+					label: item.label || '',
+					icon: item.icon || 'fa fa-file',
+					schema: item.schema
+				  }));
+					
+				  // 使用 applySnapshot 更新整个 pages
+				  applySnapshot(self.pages, newPages);
+
+				  // 如果需要持久化
+				  //const fullSnapshot = getSnapshot(self);
+				  //window.localStorage.setItem('store', JSON.stringify(fullSnapshot));
+				}
+			  })
+			  .catch((err: any) => {
+				console.error('页面列表获取失败', err);
+				env.notify?.('error', '获取页面列表失败');
+			  });
+		  }
+
+		  // 本地数据持久化
+		  // if (typeof window !== 'undefined' && window.localStorage) {
+			// const storeData = window.localStorage.getItem('store');
+			// if (storeData) applySnapshot(self, JSON.parse(storeData));
+
+			// reaction(
+			  // () => getSnapshot(self),
+			  // (json) => {
+				// window.localStorage.setItem('store', JSON.stringify(json));
+			  // }
+			// );
+		  // }
+		}
+	  
+	  /* afterCreate() {
+		  const env = getEnv(self);
+
+		  //1. 拉取页面列表初始化
+		  if (env && env.fetcher) {
+			  fetch('http://localhost:8080/api/pages') // 使用相对路径，确保 API 请求成功
+				.then((response) => response.json())
+				.then((res: any) => {
+				
+				  if (res?.status === 0 && Array.isArray(res.data)) {
+				  const storesStr = window.localStorage.getItem('store');
+				  const stores = JSON.parse(storesStr);
+				  stores.pages=res.data;
+				  //window.localStorage.setItem('store', JSON.stringify(stores));
+				  //const storeData = window.localStorage.getItem('store');
+				  console.log(stores);
+					if (stores) applySnapshot(self, stores);
+				  }
+				})
+				.catch((err: any) => {
+				  console.error('页面列表获取失败', err);
+				  env.notify('error', '获取页面列表失败');
+				});
+			}
+
+		  //2. 自动本地持久化
+		  //if (typeof window !== 'undefined' && window.localStorage) {
+			// const storeData = window.localStorage.getItem('store');
+			// if (storeData) applySnapshot(self, JSON.parse(storeData));
+
+			// reaction(
+			  // () => getSnapshot(self),
+			  // json => {
+				// window.localStorage.setItem('store', JSON.stringify(json));
+			  // }
+			// );
+		  //}
+		} */
     };
   });
 
