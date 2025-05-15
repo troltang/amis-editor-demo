@@ -43,7 +43,7 @@ export default inject('store')(
 
 	  setLoadingSchema(true);
 	  axios
-		.get(`http://localhost:300/api/page/get?id=${match.id}`)
+		.get(`/api/page/get?id=${match.id}`)
 		.then(res => {
 		  const rawSchema = res.data.data.schema;
 		  const parsed = typeof rawSchema === 'string' ? JSON.parse(rawSchema) : rawSchema;

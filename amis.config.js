@@ -48,16 +48,16 @@ module.exports = {
     closeHotReload: false, // 是否关闭热更新
     closeEditorClient: true, // 是否关闭自动注入editor
     proxyTable: {
-  '/api': {
-    target: 'http://localhost:8080',  // 或你后端实际地址
-    changeOrigin: true,
-    ws: true,
-    pathRewrite: {
-      '^/api': '/api' // 如果后端没有/api前缀则改成 ''
-    },
-    logLevel: 'debug' // 可选：打印代理日志方便调试
-  }
-}
+      /**
+       * 将含有'/apiTest'路径的api代理到'http://api-test.com.cn'上，
+       * 详细使用见 https://www.webpackjs.com/configuration/dev-server/#devserver-proxy
+       */
+      '/api': {
+        target: 'http://localhost:300', // 不支持跨域的接口根地址
+        ws: true,
+        changeOrigin: true,
+      },
+    }
   },
   build: {
     entry: { // webpack构建入口
