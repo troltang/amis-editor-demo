@@ -1,6 +1,7 @@
 import {types, getEnv, applySnapshot, getSnapshot} from 'mobx-state-tree';
 import {PageStore} from './Page';
 import {when, reaction} from 'mobx';
+import axios from 'axios';
 let pagIndex = 1;
 export const MainStore = types
   .model('MainStore', {
@@ -120,8 +121,14 @@ export const MainStore = types
 		  const env = getEnv(self);
 
 		  if (env && env.fetcher) {
-			fetch('http://localhost:300/api/page')
-			  .then((response) => response.json())
+
+			fetch('/api/page', {
+			  method: 'GET',
+			  headers: {
+				'Accept': 'application/json, text/plain, */*'
+			  }
+			})
+			  .then((response) => response.json()) // 这里建议加回来，否则拿不到 response.data
 			  .then((res: any) => {
 				if (res?.status === 0 && Array.isArray(res.data)) {
 				  const newPages = res.data.map((item: any) => ({
@@ -131,13 +138,8 @@ export const MainStore = types
 					icon: item.icon || 'fa fa-file',
 					schema: item.schema
 				  }));
-					
-				  // 使用 applySnapshot 更新整个 pages
-				  applySnapshot(self.pages, newPages);
 
-				  // 如果需要持久化
-				  //const fullSnapshot = getSnapshot(self);
-				  //window.localStorage.setItem('store', JSON.stringify(fullSnapshot));
+				  applySnapshot(self.pages, newPages);
 				}
 			  })
 			  .catch((err: any) => {

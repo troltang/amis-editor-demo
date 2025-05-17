@@ -47,7 +47,7 @@ export default schema2component(
 		const updatedData = values[0];
 
 		const response = await axios.put(
-		  `http://localhost:300/api/page/${page.id}`,
+		  `/api/page/${page.id}`,
 		  updatedData,
 		  {
 			headers: {

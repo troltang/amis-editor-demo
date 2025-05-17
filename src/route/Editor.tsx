@@ -49,7 +49,7 @@ export default inject('store')(
       if (!pageId) return;
 
       setLoading(true);
-      fetch(`http://localhost:300/api/page/get?id=${pageId}`)
+      fetch(`/api/page/get?id=${pageId}`)
         .then(res => res.json())
         .then(res => {
           if (res.status === 0) {
