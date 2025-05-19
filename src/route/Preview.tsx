@@ -109,7 +109,8 @@ export default inject('store')(
 
             const index = paths.indexOf(link.path);
             const page = store.pages[index];
-
+			//const pageid =store.pages[index].id;//
+			const pageId = page.id;
             let children = [];
 
             if (link.children) {
@@ -165,11 +166,11 @@ export default inject('store')(
 					if (!confirmed) return;
 
 					try {
-					  const pageId = page.id;
+					  
 					  //await axios.delete(`http://localhost:300/api/page/${pageId}`);
 					  
 					  const response = await axios.delete(
-						  `http://localhost:300/api/page/${pageId}`,
+						  `/api/page/${pageId}`,
 						  {
 							headers: {
 							  'Content-Type': 'application/json',
@@ -197,7 +198,7 @@ export default inject('store')(
                 className={'navbtn fa fa-pencil'}
                 onClick={(e: React.MouseEvent) => {
                   e.preventDefault();
-                  history.push(`/edit/${index}`);
+                  history.push(`/edit/${pageId}`);
                 }}
               />
             );

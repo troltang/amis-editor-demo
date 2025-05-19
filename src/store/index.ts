@@ -2,21 +2,21 @@ import {types, getEnv, applySnapshot, getSnapshot} from 'mobx-state-tree';
 import {PageStore} from './Page';
 import {when, reaction} from 'mobx';
 import axios from 'axios';
-let pagIndex = 1;
+let pagIndex = 0;
 export const MainStore = types
   .model('MainStore', {
     pages: types.optional(types.array(PageStore), [
-      {
-        id: `${pagIndex}`,
-        path: 'hello-world',
-        label: 'Hello world',
-        icon: 'fa fa-file',
-        schema: {
-          type: 'page',
-          title: 'Hello world',
-          body: '初始页面'
-        }
-      }
+      // {
+        // id: `${pagIndex}`,
+        // path: 'hello-world',
+        // label: 'Hello world',
+        // icon: 'fa fa-file',
+        // schema: {
+          // type: 'page',
+          // title: 'Hello world',
+          // body: '初始页面'
+        // }
+      // }
     ]),
     theme: 'cxd',
     asideFixed: true,
@@ -67,7 +67,7 @@ export const MainStore = types
       self.pages.push(
         PageStore.create({
           ...data,
-          id: `${++pagIndex}`
+          id: `${pagIndex}`
         })
       );
     }

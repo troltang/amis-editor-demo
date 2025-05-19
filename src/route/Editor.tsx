@@ -40,7 +40,7 @@ export default inject('store')(
     match
   }: {store: IMainStore} & RouteComponentProps<{id: string}>) {
     const index: number = parseInt(match.params.id, 10);
-    const pageId = store.pages[index]?.id;
+    const pageId =match.params.id;// store.pages[index]?.id;
     const [loading, setLoading] = useState(true);
 
     const curLanguage = currentLocale();
@@ -49,7 +49,12 @@ export default inject('store')(
       if (!pageId) return;
 
       setLoading(true);
-      fetch(`/api/page/get?id=${pageId}`)
+      fetch(`/api/page/get?id=${pageId}`, {
+		  method: 'GET',
+		  headers: {
+			'Accept': 'application/json, text/plain, */*'
+		  }
+		})
         .then(res => res.json())
         .then(res => {
           if (res.status === 0) {
@@ -72,6 +77,32 @@ export default inject('store')(
         .finally(() => {
           setLoading(false);
         });
+		
+		// fetch('/api/page', {
+		  // method: 'GET',
+		  // headers: {
+			// 'Accept': 'application/json, text/plain, */*'
+		  // }
+		// })
+		  // .then((response) => response.json()) // 这里建议加回来，否则拿不到 response.data
+		  // .then((res: any) => {
+			// if (res?.status === 0 && Array.isArray(res.data)) {
+			  // const newPages = res.data.map((item: any) => ({
+				// id: `${item.id}`,
+				// path: item.path,
+				// label: item.label || '',
+				// icon: item.icon || 'fa fa-file',
+				// schema: item.schema
+			  // }));
+
+			  // applySnapshot(self.pages, newPages);
+			// }
+		  // })
+		  // .catch((err: any) => {
+			// console.error('页面列表获取失败', err);
+			// env.notify?.('error', '获取页面列表失败');
+		  // });
+		
     }, [pageId, index, store]);
 	
 	
@@ -80,15 +111,15 @@ export default inject('store')(
 
 	  const page = store.pages[index]; // 获取当前页面
 	  const schema = page.schema;
-
+	  //const pageId =match.params.id;// store.pages[index]?.id;
 	  // 👇 添加你自己的保存接口调用
-	  fetch('http://localhost:300/api/page/save', {
+	  fetch('/api/page/save', {
 		method: 'POST',
 		headers: {
 		  'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-		  id: page.id,
+		  id: pageId,
 		  schema: schema
 		})
 	  })
